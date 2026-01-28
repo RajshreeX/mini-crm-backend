@@ -1,28 +1,50 @@
 # Mini CRM Backend (NestJS + Prisma + PostgreSQL)
 
-A backend REST API built using NestJS, PostgreSQL and Prisma ORM with JWT authentication and role-based authorization.
+A production-ready backend API for a Mini CRM system built using NestJS, Prisma ORM, and PostgreSQL, featuring JWT authentication, role-based access control, and fully documented APIs using Swagger.
+Deployed live on Render.
 
+---
+## Live Demo
+```arduino
+https://mini-crm-backend-yabk.onrender.com/
+```
+Swagger API Documentation:
+```arduino
+https://mini-crm-backend-yabk.onrender.com/api
+```
 ---
 
 ## Tech Stack
-- NestJS (TypeScript)
-- PostgreSQL
-- Prisma ORM
-- JWT Authentication
-- Swagger API Documentation
-- class-validator & class-transformer
-- bcrypt for password hashing
-
+- Backend Framework: NestJS(Node.js+TypeScript)
+- Database: PostgreSQL
+- ORM: Prisma ORM
+- Authetication: JWT
+- Authorization: Role-based Guards(ADMIN/USER)
+- API Docs: Swagger(OpenAPI)
+- Deployment: Render
 ---
 
 ## Features
-- User Registration & Login (ADMIN, EMPLOYEE)
-- Role-based access control
-- Customers CRUD with pagination
-- Task assignment to employees
-- Secure password hashing
+- User Registration & Login (JWT Auth)
+- Role-based Authorization (Admin/User)
+- CRUD operations for Customers
+- Task Management for Customers
+- Update Task Status
+- Pagination for listing endpoints
 - Swagger API documentation
+- Production-ready deployment
 
+---
+## Project Structure
+```bash
+src/
+ ├── auth/
+ ├── customers/
+ ├── customers/
+ ├── tasks/
+ ├── prisma/
+ └── main.ts
+```
 ---
 
 ## Project Setup Instructions
@@ -57,8 +79,14 @@ This will:
 - Generate Prisma Client
 
 ### 5. Start the Server
+Development mode
 ```bash
 npm run start:dev
+```
+Production build
+```bash
+npm run build
+npm run start:prod
 ```
 Server will start at:
 ```arduino
@@ -70,7 +98,13 @@ Open in browser:
 ```arduino
 http://localhost:3000/api
 ```
+or live:
+```arduino
+https://mini-crm-backend-yabk.onrender.com/api
+```
 Swagger allows testing all endpoints including protected routes using JWT token.
+
+--- 
 
 ## Authentication Flow (Testing)
 1. Register user: 
@@ -84,7 +118,29 @@ Bearer <your_token>
 ```
 5. Test protected APIs (users, customers, tasks)
 ---
+## Sample API Endpoints
+#### Auth
+- `POST /auth/register`
+- `POST /auth/login`
 
+#### Users
+- `GET /users`
+- `GET /users/:id`
+- `PATCH /users/:id`
+
+#### Customers
+- `POST /customers`
+- `GET /customers`
+- `GET /customers/:id`
+- `PATCH /customers/:id`
+- `DELETE /customers/:id`
+
+#### Tasks
+- `POST /tasks`
+- `GET /tasks`
+- `PATCH /tasks/:id/status`
+
+---
 
 ## API Modules
 - Auth Module
@@ -97,10 +153,6 @@ Bearer <your_token>
 npx prisma migrate dev
 npx prisma studio
 ```
----
-## Author
-Rajshree
-
 ---
 
 
@@ -188,6 +240,36 @@ curl -X GET http://localhost:3000/tasks \
 -H "Authorization: Bearer JWT_TOKEN_HERE"
 ```
 ---
+## Deployment (Render)
+- Backend deployed on Render
+- PostgreSQL database connected
+- Environment variables set in Render dashboard
+- Prisma migrations applied in production
+
+---
+
+## Learning Outcomes
+- Built scalable REST API using NestJS
+- Implemented JWT authentication & role-based guards
+- Used Prisma ORM with PostgreSQL
+- Designed modular architecture
+- Deployed backend to cloud (Render)
+- API documentation using Swagger
+
+---
+## Future Enhancements
+- Frontend integration (React)
+- Search & filtering
+- Docker support
+- Refresh tokens
+- Rate limiting
+- Unit tests
+---
+## Author
+Rajshree (Rexi)
+B.Tech IT Student
+Future Full-Stack Developer 
+Project: Mini CRM Backend API
 
 
 
