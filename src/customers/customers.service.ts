@@ -1,24 +1,26 @@
-import { Injectable, ConflictException, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException, ForbiddenException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { CreateCustomerDto} from './create-customer.dto'; 
-import {UpdateCustomerDto} from './update-customer.dto';
+import { CreateCustomerDto } from './dto/create-customer.dto';
+import { UpdateCustomerDto } from './dto/update-customer.dto';
+import { UserRole } from '../users/dto/update-user.dto';
 
 @Injectable()
 export class CustomersService {
   constructor(private prisma: PrismaService) {}
 
+  // ADMIN only
   async create(dto: CreateCustomerDto) {
     try {
       return await this.prisma.customer.create({ data: dto });
     } catch (err) {
-      throw new ConflictException('Email or phone already exists');
+      if (err.code === 'P2002') throw new ConflictException('Email or phone already exists');
+      throw err;
     }
   }
 
-  async findAll(page: number, limit: number) {
+  async findAll(user, page = 1, limit = 10) {
     const skip = (page - 1) * limit;
-
-    const [data, total] = await Promise.all([
+    const [data, totalRecords] = await Promise.all([
       this.prisma.customer.findMany({ skip, take: limit }),
       this.prisma.customer.count(),
     ]);
@@ -26,8 +28,8 @@ export class CustomersService {
     return {
       page,
       limit,
-      totalRecords: total,
-      totalPages: Math.ceil(total / limit),
+      totalRecords,
+      totalPages: Math.ceil(totalRecords / limit),
       data,
     };
   }
@@ -39,15 +41,19 @@ export class CustomersService {
   }
 
   async update(id: number, dto: UpdateCustomerDto) {
+    const customer = await this.prisma.customer.findUnique({ where: { id } });
+    if (!customer) throw new NotFoundException('Customer not found');
     try {
       return await this.prisma.customer.update({ where: { id }, data: dto });
-    } catch {
-      throw new ConflictException('Duplicate email or phone');
+    } catch (err) {
+      if (err.code === 'P2002') throw new ConflictException('Email or phone already exists');
+      throw err;
     }
   }
 
   async remove(id: number) {
-    const customer = await this.findOne(id);
+    const customer = await this.prisma.customer.findUnique({ where: { id } });
+    if (!customer) throw new NotFoundException('Customer not found');
     return this.prisma.customer.delete({ where: { id } });
   }
 }

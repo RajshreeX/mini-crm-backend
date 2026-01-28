@@ -1,26 +1,30 @@
-import { Controller, Post, Get, Patch, Param, Body, Req, UseGuards } from '@nestjs/common';
+import { Controller, Post, Get, Patch, Body, Param, UseGuards, Req } from '@nestjs/common';
 import { TasksService } from './tasks.service';
-import { JwtAuthGuard } from '../guards/jwt-auth.guard';
-import { RolesGuard } from '../guards/roles.guard';
+import { CreateTaskDto } from './dto/create-task.dto';
+import { UpdateTaskStatusDto } from './dto/update-task-status.dto';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { RolesGuard } from '../auth/roles.guard';
+import { Roles } from '../auth/roles.decorator';
+import { UserRole } from '../users/dto/update-user.dto';
 
 @Controller('tasks')
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class TasksController {
-  constructor(private service: TasksService) {}
+  constructor(private tasksService: TasksService) {}
 
   @Post()
-  @UseGuards(new RolesGuard('ADMIN'))
-  create(@Body() dto) {
-    return this.service.create(dto);
+  @Roles(UserRole.ADMIN)
+  create(@Body() dto: CreateTaskDto) {
+    return this.tasksService.create(dto);
   }
 
   @Get()
-  getTasks(@Req() req) {
-    return this.service.findAll(req.user);
+  findAll(@Req() req) {
+    return this.tasksService.findAll(req.user);
   }
 
   @Patch(':id/status')
-  updateStatus(@Param('id') id: number, @Body() body, @Req() req) {
-    return this.service.updateStatus(+id, body.status, req.user);
+  updateStatus(@Param('id') id: string, @Body() dto: UpdateTaskStatusDto, @Req() req) {
+    return this.tasksService.updateStatus(Number(id), dto, req.user);
   }
 }

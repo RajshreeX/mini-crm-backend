@@ -1,4 +1,6 @@
 import { IsEnum } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
+import { Role } from '../../auth/dto/auth.dto';
 
 export enum UserRole {
   ADMIN = 'ADMIN',
@@ -6,6 +8,7 @@ export enum UserRole {
 }
 
 export class UpdateUserDto {
-  @IsEnum(UserRole)
-  role: UserRole;
+   @ApiProperty({ enum: Role })
+  @IsEnum(Role)
+  role: Role;
 }

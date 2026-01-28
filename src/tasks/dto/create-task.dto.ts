@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsOptional, IsEnum } from 'class-validator';
+import { IsString, IsOptional, IsEnum, IsNumber } from 'class-validator';
 
 export enum TaskStatus {
   PENDING = 'PENDING',
@@ -7,19 +7,20 @@ export enum TaskStatus {
 }
 
 export class CreateTaskDto {
-  @IsNotEmpty()
+  @IsString()
   title: string;
 
   @IsOptional()
+  @IsString()
   description?: string;
 
-  @IsNotEmpty()
-  assignedTo: number;
-
-  @IsNotEmpty()
-  customerId: number;
-
-  @IsOptional()
   @IsEnum(TaskStatus)
+  @IsOptional()
   status?: TaskStatus;
+
+  @IsNumber()
+  assignedTo: number; // employee userId
+
+  @IsNumber()
+  customerId: number;
 }

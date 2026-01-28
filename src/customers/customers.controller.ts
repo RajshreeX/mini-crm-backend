@@ -1,38 +1,42 @@
-import { Controller, Get, Post, Patch, Delete, Param, Body, Query, UseGuards, Req } from '@nestjs/common';
+import { Controller, Post, Get, Patch, Delete, Param, Body, Query, UseGuards, Req } from '@nestjs/common';
 import { CustomersService } from './customers.service';
-import { JwtAuthGuard } from '../guards/jwt-auth.guard';
-import { RolesGuard } from '../guards/roles.guard';
+import { CreateCustomerDto } from './dto/create-customer.dto';
+import { UpdateCustomerDto } from './dto/update-customer.dto';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { RolesGuard } from '../auth/roles.guard';
+import { Roles } from '../auth/roles.decorator';
+import { UserRole } from '../users/dto/update-user.dto';
 
 @Controller('customers')
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class CustomersController {
-  constructor(private service: CustomersService) {}
+  constructor(private customersService: CustomersService) {}
 
   @Post()
-  @UseGuards(new RolesGuard('ADMIN'))
-  create(@Body() dto) {
-    return this.service.create(dto);
+  @Roles(UserRole.ADMIN)
+  create(@Body() dto: CreateCustomerDto) {
+    return this.customersService.create(dto);
   }
 
   @Get()
-  findAll(@Query('page') page = 1, @Query('limit') limit = 10) {
-    return this.service.findAll(+page, +limit);
+  findAll(@Req() req, @Query('page') page: string, @Query('limit') limit: string) {
+    return this.customersService.findAll(req.user, Number(page) || 1, Number(limit) || 10);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: number) {
-    return this.service.findOne(+id);
+  findOne(@Param('id') id: string) {
+    return this.customersService.findOne(Number(id));
   }
 
   @Patch(':id')
-  @UseGuards(new RolesGuard('ADMIN'))
-  update(@Param('id') id: number, @Body() dto) {
-    return this.service.update(+id, dto);
+  @Roles(UserRole.ADMIN)
+  update(@Param('id') id: string, @Body() dto: UpdateCustomerDto) {
+    return this.customersService.update(Number(id), dto);
   }
 
   @Delete(':id')
-  @UseGuards(new RolesGuard('ADMIN'))
-  remove(@Param('id') id: number) {
-    return this.service.remove(+id);
+  @Roles(UserRole.ADMIN)
+  remove(@Param('id') id: string) {
+    return this.customersService.remove(Number(id));
   }
 }

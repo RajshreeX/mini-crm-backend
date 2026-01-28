@@ -1,24 +1,20 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { ValidationPipe } from '@nestjs/common';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // Global validation
-  app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
-
-  // Swagger config
+  // Swagger setup
   const config = new DocumentBuilder()
     .setTitle('Mini CRM Backend')
-    .setDescription('API documentation for Mini CRM Backend')
+    .setDescription('API Documentation for Prysm Labs Backend Assignment')
     .setVersion('1.0')
-    .addBearerAuth()
+    .addBearerAuth() // for JWT-protected routes
     .build();
-
+    
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
+  SwaggerModule.setup('api', app, document); // Swagger UI at http://localhost:3000/api
 
   await app.listen(3000);
 }
