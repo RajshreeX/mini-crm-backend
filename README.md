@@ -266,10 +266,10 @@ curl -X GET http://localhost:3000/tasks \
 - Unit tests
 ---
 ## Author
-Rajshree (Rexi)
-B.Tech IT Student
-Future Full-Stack Developer 
-Project: Mini CRM Backend API
+- **Rajshree (Rexi)**
+- B.Tech IT Student
+- Future Full-Stack Developer 
+- Project: Mini CRM Backend API
 
 
 
